@@ -18,7 +18,7 @@ var resCountWrap = document.createElement('div'); // Count results of search
 
 
 
-function loadTowns(url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities2.json') {
+function loadTowns(url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json') {
     console.log('пытаемся загрузить города, ' + url)
     return new Promise ((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -84,42 +84,18 @@ function createTextField() {
 
 }
 
-
-function cityListCreate(value) {
-    console.log('Список формируется');
-    for (let i = 0; i < value.length; i++) {
-        let newCity = document.createElement('li');
-        newCityList[i] = value[i].name;
-        newCity.textContent = newCityList[i];
-        content.appendChild(newCity);
-    }
-    console.log('Список готов');
-}
-
 function  tryAgain() {
     console.log('Запустили трай эгэйн')
     var againBut =  document.createElement('button');
     againBut.textContent = 'Попробовать загрузить снова';
 
-    content.innerHTML = '<p class="error_msg">Не удалось загрузить список</p>'
+    content.innerHTML = '<p>Не удалось загрузить список</p>'
     content.appendChild(againBut);
 
     againBut.addEventListener('click', function () {
         console.log('click');
         let url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
-        loadTowns(url).then(
-            (value) => {
-            console.log('Повторная загрузка успешно завершена');
-            cityListCreate(value);
-            var message = content.querySelector('.error_msg');
-            content.removeChild(message);
-            content.removeChild(againBut);
-            console.log('Лишние элементы удалены');
-            },
-            (value) => {
-            console.log('Повторная загрузка, код ошибки: ' + value);
-            }
-        );
+        loadTowns(url);
     })
 
 }
@@ -192,7 +168,15 @@ pageLoader()
 loadTowns()
     .then(
         (value) => {
-            cityListCreate(value);
+            console.log('Перед формированием списка');
+            for (let i = 0; i < value.length; i++) {
+                let newCity = document.createElement('li');
+                newCityList[i] = value[i].name;
+                //console.log(newCityList[i]);
+                newCity.textContent = newCityList[i];
+                content.appendChild(newCity);
+            }
+            console.log('Список загружен');
         },
         (value) => {
             tryAgain();
